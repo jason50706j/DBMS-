@@ -24,6 +24,7 @@ void createNewFile(char* fileName, tuple* headPtr, char** column);
 tuple *buildList (int index);
 void findByStuID(char *StuID);
 tuple *tuplecpy(tuple *Dest,tuple *Sourse);
+void printNode(tuple *node);
 
 int main()
 {
@@ -47,7 +48,7 @@ int main()
     }
     fclose(filePtr);
     printf("endof Creating\n\n");
-    findByStuID("D000003506");
+    findByStuID("D000005500");
    
     return 0;
 }
@@ -103,6 +104,7 @@ tuple* createLinkList(FILE *filePtr, int longtuple){
         //char* tmp=(char*)malloc(sizeof(char)*50);
 
     }
+    //printf("%s",headPtr->nextPtr->student_id);
     printf("finish create link list\n");
     return headPtr;
 }
@@ -233,41 +235,51 @@ void findByStuID(char *StuID)
 {
 	int index = 0;
 	FILE *fp = fopen("re.txt","w+");
+	//char *curr = (char*)malloc(sizeof(Data.student_id));
+	int flag = 0;//有沒有找到 
 	tuple* Data = buildList(index);
 	tuple* currentPtr = Data;
-	//char *curr = (char*)malloc(sizeof(Data.student_id));
-	int flag = 0;
-	while(flag == 0)
-	{	
-		Data = buildList(index);
-		printf(">>* %s\n",Data->course_id);
-		while(currentPtr->nextPtr != NULL)//search
+	printf("STUID listfin\n");
+	for(index = 0;currentPtr->nextPtr;currentPtr = currentPtr->nextPtr,index++)
+	{
+		printf("%d ",index);
+		printf("%s %s\n",currentPtr->student_id,StuID);
+		if(strcmp(currentPtr->student_id,StuID) == 0)
 		{
-			if(strcmp(Data->student_id,StuID) == 0)
-			{
-				flag = 1;
-				fprintf(fp,"%s %d %s\n",Data->course_id,Data->course_id,Data->coures_name);
-			}
-			if(flag == 1 && strcmp(Data->student_id,StuID) != 0)
-			{
-				break;
-			}
-			currentPtr = currentPtr->nextPtr;
+			flag = 1;
+			printf("Flag = %d\n",flag);
+			printf("%s %d %s\n",currentPtr->student_id,currentPtr->course_id,currentPtr->coures_name);
+			fprintf(fp,"%s %d %s\n",currentPtr->student_id,currentPtr->course_id,currentPtr->coures_name);
 		}
-		index++;
-		
+		if(flag == 1 && strcmp(currentPtr->student_id,StuID) != 0)//如果已經找到檔案且不重複 
+		{
+			printf("%s\n",currentPtr->student_id);
+			break;
+		}
 	}
+	//printf("%s",currentPtr->student_id);
+	
 	fclose(fp);
 }
-
+void printNode(tuple *node)
+{
+	static int num = 0;
+	if(node->nextPtr == NULL)
+	{
+		return;
+	} else {
+		printf("NO.%2d StuID = %s\t CourseID = %d\tCourseName = %s\tIndexID = %d\n",num,node->student_id,node->course_id,node->coures_name,node->index);
+		num++;
+		printNode(node->nextPtr);
+	}
+}
 tuple *buildList (int index)
 {
 	printf("inBuildList\n");
 	
 	FILE *fp = fopen("sorted_big5(2).csv", "r+");
-	tuple *head = createLinkList(fp, 100);
-	printf(">> %s\n",head->nextPtr->student_id);
-
+	fseek(fp,35*index+35,SEEK_SET);//del first line and shifting 
+	tuple *head = createLinkList(fp, 100+2);
 	return head;
 }  
 tuple *tuplecpy(tuple *Dest,tuple *Sourse)
