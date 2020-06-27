@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define READ_FILE  sorted_big5(2).csv
 //the type of Tuple
 typedef struct tuple{
     char *student_id;
@@ -20,7 +21,9 @@ tuple *insert(tuple *frist, tuple *data);
 tuple *InsertCurrent(tuple *currPtr, tuple *data);
 tuple *deleteNode(tuple *first,tuple data);
 void createNewFile(char* fileName, tuple* headPtr, char** column);
-
+tuple *buildList (int index);
+void findByStuID(char *StuID);
+tuple *tuplecpy(tuple *Dest,tuple *Sourse);
 
 int main()
 {
@@ -43,6 +46,9 @@ int main()
         createNewFile("sorted_test1.csv", headPtr, column);
     }
     fclose(filePtr);
+    printf("endof Creating\n\n");
+    findByStuID("D000003506");
+   
     return 0;
 }
 
@@ -63,7 +69,8 @@ void init(tuple* currPtr, char* tmp){
 }
 
 tuple* createLinkList(FILE *filePtr, int longtuple){
-    char* tmp = (char*)malloc(sizeof(tuple)*40);
+    printf("increateLinkList\n");
+	char* tmp = (char*)malloc(sizeof(tuple)*40);
     //char tmp[200]={0};
     tuple *headPtr=(tuple*)malloc(sizeof(tuple));
     tuple *currPtr=headPtr;
@@ -74,8 +81,8 @@ tuple* createLinkList(FILE *filePtr, int longtuple){
     sscanf(strtok(NULL,","), "%d", &headPtr->course_id); //intÂà´«
     headPtr->coures_name=strtok(NULL,",");*/
     init(headPtr,tmp);
-    printf("id : %d\n",index );
-    printf("%10s %9d %11s\n", headPtr->student_id, headPtr->course_id, headPtr->coures_name);
+   // printf("id : %d\n",index );
+  //  printf("%10s %9d %11s\n", headPtr->student_id, headPtr->course_id, headPtr->coures_name);
     tmp=(char*)malloc(sizeof(char)*50);
     while(fgets(tmp,200,filePtr)){
         tuple *currentData = (tuple*)malloc(sizeof(tuple));
@@ -198,7 +205,7 @@ tuple *deleteNode(tuple *first,tuple data){
 }
 
 void createNewFile( char* fileName, tuple* headPtr, char **column ){
-    tuple* currPtr=headPtr;
+    tuple* currPtr=headPtr;  
     FILE *fPtr;
     printf("%s\n", fileName);
     if((fPtr=fopen(fileName, "w"))==NULL){
@@ -221,5 +228,55 @@ void createNewFile( char* fileName, tuple* headPtr, char **column ){
         }
 
     }
+}
+void findByStuID(char *StuID)
+{
+	int index = 0;
+	FILE *fp = fopen("re.txt","w+");
+	tuple* Data = buildList(index);
+	tuple* currentPtr = Data;
+	//char *curr = (char*)malloc(sizeof(Data.student_id));
+	int flag = 0;
+	while(flag == 0)
+	{	
+		Data = buildList(index);
+		printf(">>* %s\n",Data->course_id);
+		while(currentPtr->nextPtr != NULL)//search
+		{
+			if(strcmp(Data->student_id,StuID) == 0)
+			{
+				flag = 1;
+				fprintf(fp,"%s %d %s\n",Data->course_id,Data->course_id,Data->coures_name);
+			}
+			if(flag == 1 && strcmp(Data->student_id,StuID) != 0)
+			{
+				break;
+			}
+			currentPtr = currentPtr->nextPtr;
+		}
+		index++;
+		
+	}
+	fclose(fp);
+}
+
+tuple *buildList (int index)
+{
+	printf("inBuildList\n");
+	
+	FILE *fp = fopen("sorted_big5(2).csv", "r+");
+	tuple *head = createLinkList(fp, 100);
+	printf(">> %s\n",head->nextPtr->student_id);
+
+	return head;
+}  
+tuple *tuplecpy(tuple *Dest,tuple *Sourse)
+{
+	Dest->coures_name = Sourse->coures_name;
+	Dest->course_id = Sourse->course_id;
+	Dest->student_id =  Sourse->student_id;
+	Dest->index =  Sourse->index;
+	Dest->nextPtr = Sourse->nextPtr;
+	return Dest;
 }
 
