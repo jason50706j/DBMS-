@@ -41,7 +41,8 @@ int main()
     }
     else{
         //printf("out\n");
-        fscanf(filePtr, "%s", tmp);//²Ä¤@­ÓtupleªÅ­È³B²z
+        fscanf(filePtr, "%s%*c", tmp);//ç¬¬ä¸€å€‹tupleç©ºå€¼è™•ç†
+        //scanf("%*c");
         column[0] = strtok(tmp,",");
         for(int i=1;i<4;i++){
             column[i] = strtok(NULL,",");
@@ -52,8 +53,8 @@ int main()
     }
     fclose(filePtr);
     printf("endof Creating\n\n");
-    findByStuID("D003847213");
-    //findByCourseID(1331);
+    //findByStuID("D003847213");
+    findByCourseID(2168);
     return 0;
 }
 
@@ -62,9 +63,13 @@ int toIntId(char *stringId){
 }
 
 void init(tuple* currPtr, char* tmp){
+    //printf("init\n");
     currPtr->nextPtr=NULL;
+    //printf("...2\n");
+    //printf("%s...2\n", tmp);
     currPtr->student_id = strtok(tmp,",");
-    sscanf(strtok(NULL,","), "%d", &currPtr->course_id);//intÂà´«
+
+    sscanf(strtok(NULL,","), "%d", &currPtr->course_id);//intè½‰æ›
     currPtr->coures_name=strtok(NULL,",");
     //printf("%s", strtok(NULL,","));
     currPtr->index=atoi(strtok(strtok(NULL,","),"\n"));
@@ -79,26 +84,40 @@ tuple* createLinkList(FILE *filePtr, int longtuple){
     //char tmp[200]={0};
     tuple *headPtr=(tuple*)malloc(sizeof(tuple));
     tuple *currPtr=headPtr;
-    int index=1;
-    fscanf(filePtr, "%s%*c", tmp);
+    int index=0;
+    //fgets(tmp,40,filePtr);
+    //printf("%skkk\n", tmp);
     /*headPtr->index=index;
     headPtr->student_id = strtok(tmp,",");
-    sscanf(strtok(NULL,","), "%d", &headPtr->course_id); //intÂà´«
+    sscanf(strtok(NULL,","), "%d", &headPtr->course_id); //intè½‰æ›
     headPtr->coures_name=strtok(NULL,",");*/
-    init(headPtr,tmp);
-   // printf("id : %d\n",index );
+    //printf("...\n");
+    //init(headPtr,tmp);
+    //printf("id : %d\n",index );
   //  printf("%10s %9d %11s\n", headPtr->student_id, headPtr->course_id, headPtr->coures_name);
-    tmp=(char*)malloc(sizeof(char)*50);
+    //tmp=(char*)malloc(sizeof(char)*50);
     while(fgets(tmp,200,filePtr)){
+        printf("%s kkkk", tmp);
         tuple *currentData = (tuple*)malloc(sizeof(tuple));
         index++;
         if(index==longtuple)break;
         if((index%10000)==0)printf("already have: %d\n", index);
         init(currentData, tmp);
+        //printf("out init");
+        if( currPtr==headPtr){
+            //printf("....");
+            headPtr=currentData;
+            currPtr=headPtr;
+            //printf("....2");
+        }
+        else{
+            //printf("%d ",currPtr->index);
+            currPtr->nextPtr=currentData;
+            currPtr=currPtr->nextPtr;
 
-        currPtr->nextPtr=currentData;
-        currPtr=currPtr->nextPtr;
-        printf("%d ",currPtr->index);
+        }
+
+        //printf("%d ",currPtr->index);
         tmp=(char*)malloc(sizeof(char)*50);
         //printf("id : %d\n",index );
         //printf("current: %10s %9d %11s\n", currentData->student_id, currentData->course_id, currentData->coures_name);
@@ -137,7 +156,7 @@ tuple *insert(tuple *first, tuple *data)
         first->nextPtr= data;
     }
     else{
-        //¥Hid¥Ñ¤p±Æ¨ì¤j¡Aºâ¥Xcrrent­È
+        //ä»¥idç”±å°æ’åˆ°å¤§ï¼Œç®—å‡ºcrrentå€¼
         //printf("nok\n");
         currPtr=InsertCurrent(currPtr, data);
         printf("ok\n");
@@ -152,8 +171,8 @@ tuple *insert(tuple *first, tuple *data)
     return first;
 }
 
-//¥Hid¥Ñ¤p±Æ¨ì¤j¡Aºâ¥Xinsert­n´¡¤Jªº¦a¤è
-//¦^¶Ç­Èªºnest¬°­n´¡¤Jªº¦a¤è
+//ä»¥idç”±å°æ’åˆ°å¤§ï¼Œç®—å‡ºinsertè¦æ’å…¥çš„åœ°æ–¹
+//å›å‚³å€¼çš„nestç‚ºè¦æ’å…¥çš„åœ°æ–¹
 tuple *InsertCurrent(tuple *currPtr, tuple *data){
     if(currPtr==NULL)printf("currPtr is NULL");
     else if(currPtr->nextPtr == NULL)return currPtr;
@@ -211,7 +230,7 @@ tuple *deleteNode(tuple *first,tuple data){
 }
 
 void createNewFile( char* fileName, tuple* headPtr, char **column ){
-    tuple* currPtr=headPtr;  
+    tuple* currPtr=headPtr;
     FILE *fPtr;
     printf("%s\n", fileName);
     if((fPtr=fopen(fileName, "w"))==NULL){
@@ -241,11 +260,11 @@ void findByStuID(char *StuID)
 	int index = 0;
 	FILE *fp = fopen("reStuID.txt","w+");
 	//char *curr = (char*)malloc(sizeof(Data.student_id));
-	int flag = 0;//¦³¨S¦³§ä¨ì 
+	int flag = 0;//æœ‰æ²’æœ‰æ‰¾åˆ°
 //	tuple* Data = buildList(index);
 //	tuple* currentPtr = Data;
 //	printf("STUID listfin\n");
-	fprintf(fp,"%s ­×¦æ½Òµ{¦p¤U¡G\n",StuID);
+	fprintf(fp,"%s ä¿®è¡Œèª²ç¨‹å¦‚ä¸‹ï¼š\n",StuID);
 	for(index=0;flag != 2;index++)
 	{
 		tuple* Data = buildList(index);
@@ -261,7 +280,7 @@ void findByStuID(char *StuID)
 				printf("%s %d %s\n",currentPtr->student_id,currentPtr->course_id,currentPtr->coures_name);
 				fprintf(fp,"%d %s\n",currentPtr->course_id,currentPtr->coures_name);
 			}
-			if(flag == 1 && strcmp(currentPtr->student_id,StuID) != 0)//¦pªG¤w¸g§ä¨ìÀÉ®×¥B¤£­«½Æ 
+			if(flag == 1 && strcmp(currentPtr->student_id,StuID) != 0)//å¦‚æœå·²ç¶“æ‰¾åˆ°æª”æ¡ˆä¸”ä¸é‡è¤‡
 			{
 				flag = 2;
 				printf("%s\n",currentPtr->student_id);
@@ -278,12 +297,11 @@ void findByCourseID(int Course_id)
 	int index = 0;
 	FILE *fp = fopen("reCourseID.txt","w+");
 	int amount = 0;
-	int flag = 0;//¦³¨S¦³§ä¨ì 
+	int flag = 0;//æœ‰æ²’æœ‰æ‰¾åˆ°
 	for(flag = 0,index = 0;flag != 1;index++)
 	{
 		tuple* Data = buildList(index);
 		tuple* currentPtr = Data;
-	
 		if (Data->course_id == 0)
 		{
 			printf("FLAG = 1");
@@ -296,11 +314,11 @@ void findByCourseID(int Course_id)
 			{
 				amount++;
 				printf("index = %d\n",currentPtr->index);
-				printf("%d\n",amount);
+				//printf("%d\n",amount);
 			}
-		
+
 		}
-		free_all(Data);			
+		free_all(Data);
 	}
 	printf("amount : %d",amount);
 	fclose(fp);
@@ -331,20 +349,19 @@ tuple *buildList (int index)
 */
 	//fseek(curr,35,SEEK_SET);
 	for(int i = 0; i <100 ;i++){
-		
 		char a[200] ={0};
 		fseek(curr,shift,SEEK_SET);
-		fscanf(curr,"%s",a);
+		fgets(a,200,fp);
 		shift += strlen(a);
 		shift +=2;
-		//del first line and shifting 
-		printf(">>>>>%d %s %d\n",i,a,strlen(a));
-		
+		//del first line and shifting
+		//printf(">>>>>%d %s %d\n",i,a,strlen(a));
+
 	}
-	
+
 	tuple *head = createLinkList(fp, 100+2);
 	return head;
-}  
+}
 tuple *tuplecpy(tuple *Dest,tuple *Sourse)
 {
 	Dest->coures_name = Sourse->coures_name;
@@ -356,7 +373,7 @@ tuple *tuplecpy(tuple *Dest,tuple *Sourse)
 }
 void free_all(tuple* headPtr)
 {
-	tuple *currentPtr = headPtr,*nextPtr= headPtr->nextPtr; 
+	tuple *currentPtr = headPtr,*nextPtr= headPtr->nextPtr;
 	while(currentPtr->nextPtr!=NULL)
 	{
 		free(currentPtr);
