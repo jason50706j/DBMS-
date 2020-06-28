@@ -52,8 +52,8 @@ int main()
     }
     fclose(filePtr);
     printf("endof Creating\n\n");
-    //findByStuID("D003847213");
-    findByCourseID(2168);
+    findByStuID("D003847213");
+    //findByCourseID(1331);
     return 0;
 }
 
@@ -98,7 +98,7 @@ tuple* createLinkList(FILE *filePtr, int longtuple){
 
         currPtr->nextPtr=currentData;
         currPtr=currPtr->nextPtr;
-        //printf("%d ",currPtr->index);
+        printf("%d ",currPtr->index);
         tmp=(char*)malloc(sizeof(char)*50);
         //printf("id : %d\n",index );
         //printf("current: %10s %9d %11s\n", currentData->student_id, currentData->course_id, currentData->coures_name);
@@ -279,7 +279,7 @@ void findByCourseID(int Course_id)
 	FILE *fp = fopen("reCourseID.txt","w+");
 	int amount = 0;
 	int flag = 0;//有沒有找到 
-	for(flag = 0,index = 0;flag != 1;flag++,index++)
+	for(flag = 0,index = 0;flag != 1;index++)
 	{
 		tuple* Data = buildList(index);
 		tuple* currentPtr = Data;
@@ -291,7 +291,7 @@ void findByCourseID(int Course_id)
 		}
 		for(;currentPtr->nextPtr;currentPtr = currentPtr->nextPtr)
 		{
-			printf("%s %d %d\n",currentPtr->student_id,currentPtr->course_id,currentPtr->course_id==Course_id);
+			//printf("%s %d %d\n",currentPtr->student_id,currentPtr->course_id,currentPtr->course_id==Course_id);
 			if(currentPtr->course_id == Course_id)
 			{
 				amount++;
@@ -321,27 +321,27 @@ void printNode(tuple *node)
 tuple *buildList (int index)
 {
 	printf("inBuildList\n");
-
-	
 	FILE *fp = fopen("sorted_big5(2).csv", "r+");
 	FILE *curr = fp;
-
 /*	char a[200];
 	fseek(fp,35,SEEK_SET);
 	fscanf(fp,"%s",a);
 	printf(">>>>>Aa %s %d\n",a,strlen(a));
 	fseek(fp,,SEEK_SET);
 */
-	for(int i = 0; i <100*1 ;i++){
+	//fseek(curr,35,SEEK_SET);
+	for(int i = 0; i <100 ;i++){
+		
 		char a[200] ={0};
+		fseek(curr,shift,SEEK_SET);
 		fscanf(curr,"%s",a);
-		//printf(">>>>>%d %s %d\n",i,a,strlen(a));
 		shift += strlen(a);
 		shift +=2;
+		//del first line and shifting 
+		printf(">>>>>%d %s %d\n",i,a,strlen(a));
 		
-		fseek(curr,shift,SEEK_SET);//del first line and shifting 
 	}
-
+	
 	tuple *head = createLinkList(fp, 100+2);
 	return head;
 }  
