@@ -25,6 +25,10 @@ tuple *buildList (int index);
 void findByStuID(char *StuID);
 tuple *tuplecpy(tuple *Dest,tuple *Sourse);
 void printNode(tuple *node);
+void findByCourseID(int Course_id);
+int shift = 35;
+void free_all(tuple* headPtr);
+
 
 int main()
 {
@@ -48,8 +52,8 @@ int main()
     }
     fclose(filePtr);
     printf("endof Creating\n\n");
-    findByStuID("D000005500");
-   
+    //findByStuID("D003847213");
+    findByCourseID(2168);
     return 0;
 }
 
@@ -233,34 +237,75 @@ void createNewFile( char* fileName, tuple* headPtr, char **column ){
 }
 void findByStuID(char *StuID)
 {
+	shift = 35;
 	int index = 0;
-	FILE *fp = fopen("re.txt","w+");
+	FILE *fp = fopen("reStuID.txt","w+");
 	//char *curr = (char*)malloc(sizeof(Data.student_id));
 	int flag = 0;//有沒有找到 
-	tuple* Data = buildList(index);
-	tuple* currentPtr = Data;
-	printf("STUID listfin\n");
-	for(index = 0;currentPtr->nextPtr;currentPtr = currentPtr->nextPtr,index++)
+//	tuple* Data = buildList(index);
+//	tuple* currentPtr = Data;
+//	printf("STUID listfin\n");
+	fprintf(fp,"%s 修行課程如下：\n",StuID);
+	for(index=0;flag != 2;index++)
 	{
-		printf("%d ",index);
-		printf("%s %s\n",currentPtr->student_id,StuID);
-		if(strcmp(currentPtr->student_id,StuID) == 0)
+		tuple* Data = buildList(index);
+		tuple* currentPtr = Data;
+		for(index = 0;currentPtr->nextPtr;currentPtr = currentPtr->nextPtr,index++)
 		{
-			flag = 1;
-			printf("Flag = %d\n",flag);
-			printf("%s %d %s\n",currentPtr->student_id,currentPtr->course_id,currentPtr->coures_name);
-			fprintf(fp,"%s %d %s\n",currentPtr->student_id,currentPtr->course_id,currentPtr->coures_name);
+		//	printf("%d ",index);
+		//	printf("%s %s\n",currentPtr->student_id,StuID);
+			if(strcmp(currentPtr->student_id,StuID) == 0)
+			{
+				flag = 1;
+				printf("Flag = %d\n",flag);
+				printf("%s %d %s\n",currentPtr->student_id,currentPtr->course_id,currentPtr->coures_name);
+				fprintf(fp,"%d %s\n",currentPtr->course_id,currentPtr->coures_name);
+			}
+			if(flag == 1 && strcmp(currentPtr->student_id,StuID) != 0)//如果已經找到檔案且不重複 
+			{
+				flag = 2;
+				printf("%s\n",currentPtr->student_id);
+				break;
+			}
 		}
-		if(flag == 1 && strcmp(currentPtr->student_id,StuID) != 0)//如果已經找到檔案且不重複 
-		{
-			printf("%s\n",currentPtr->student_id);
-			break;
-		}
-	}
 	//printf("%s",currentPtr->student_id);
-	
+	}
 	fclose(fp);
 }
+void findByCourseID(int Course_id)
+{
+	shift = 35;
+	int index = 0;
+	FILE *fp = fopen("reCourseID.txt","w+");
+	int amount = 0;
+	int flag = 0;//有沒有找到 
+	for(flag = 0,index = 0;flag != 1;flag++,index++)
+	{
+		tuple* Data = buildList(index);
+		tuple* currentPtr = Data;
+	
+		if (Data->course_id == 0)
+		{
+			printf("FLAG = 1");
+			flag = 1;
+		}
+		for(;currentPtr->nextPtr;currentPtr = currentPtr->nextPtr)
+		{
+			printf("%s %d %d\n",currentPtr->student_id,currentPtr->course_id,currentPtr->course_id==Course_id);
+			if(currentPtr->course_id == Course_id)
+			{
+				amount++;
+				printf("index = %d\n",currentPtr->index);
+				printf("%d\n",amount);
+			}
+		
+		}
+		free_all(Data);			
+	}
+	printf("amount : %d",amount);
+	fclose(fp);
+}
+
 void printNode(tuple *node)
 {
 	static int num = 0;
@@ -276,9 +321,27 @@ void printNode(tuple *node)
 tuple *buildList (int index)
 {
 	printf("inBuildList\n");
+
 	
 	FILE *fp = fopen("sorted_big5(2).csv", "r+");
-	fseek(fp,35*index+35,SEEK_SET);//del first line and shifting 
+	FILE *curr = fp;
+
+/*	char a[200];
+	fseek(fp,35,SEEK_SET);
+	fscanf(fp,"%s",a);
+	printf(">>>>>Aa %s %d\n",a,strlen(a));
+	fseek(fp,,SEEK_SET);
+*/
+	for(int i = 0; i <100*1 ;i++){
+		char a[200] ={0};
+		fscanf(curr,"%s",a);
+		//printf(">>>>>%d %s %d\n",i,a,strlen(a));
+		shift += strlen(a);
+		shift +=2;
+		
+		fseek(curr,shift,SEEK_SET);//del first line and shifting 
+	}
+
 	tuple *head = createLinkList(fp, 100+2);
 	return head;
 }  
@@ -291,4 +354,14 @@ tuple *tuplecpy(tuple *Dest,tuple *Sourse)
 	Dest->nextPtr = Sourse->nextPtr;
 	return Dest;
 }
-
+void free_all(tuple* headPtr)
+{
+	tuple *currentPtr = headPtr,*nextPtr= headPtr->nextPtr; 
+	while(currentPtr->nextPtr!=NULL)
+	{
+		free(currentPtr);
+		currentPtr = nextPtr;
+		nextPtr = nextPtr->nextPtr;
+	}
+	free(currentPtr);
+}
